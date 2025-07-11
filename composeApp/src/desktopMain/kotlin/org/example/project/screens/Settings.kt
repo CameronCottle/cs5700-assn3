@@ -4,17 +4,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import org.example.project.navigation.Destinations
+import org.example.project.navigation.Navigation
 
 @Composable
-fun Settings(
-    goBack: () -> Unit
-) {
+fun Settings (navigation: Navigation) {
+
     Column {
         Text("Settings Page")
         Button(onClick = {
-            goBack()
+            navigation.goBack()
         }) {
-            Text("Back")
+            Text("Go Back")
         }
     }
 }

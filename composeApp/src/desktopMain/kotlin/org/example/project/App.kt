@@ -21,17 +21,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import assn2.composeapp.generated.resources.Res
 import assn2.composeapp.generated.resources.compose_multiplatform
+import org.example.project.navigation.ComposeNavigation
+import org.example.project.navigation.Destinations
 import org.example.project.screens.Home
+import org.example.project.screens.Settings
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
        val navController = rememberNavController()
-        val navigation = remember{ComposeNavigation(navController)}
-//        LaunchedEffect(Unit){
-//            navigation.goToSettings()
-//        }
+        val navigation = remember{ ComposeNavigation(navController) }
+
         NavHost(
             navController,
             startDestination = Destinations.Home
@@ -40,9 +41,8 @@ fun App() {
                 Home(navigation)
             }
 
-
             composable<Destinations.Settings> {
-                Settings(goBack = {navController.popBackStack()})
+                Settings(navigation)
             }
         }
     }
