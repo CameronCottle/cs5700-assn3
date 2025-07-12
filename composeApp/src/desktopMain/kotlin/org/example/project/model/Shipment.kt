@@ -1,23 +1,38 @@
 package org.example.project.model
 
-class Shipment(private val id: String) {
+import org.example.project.model.ShippingUpdate
 
-    private var status = ""
+class Shipment(val id: String) {
+    private var status: String = "created"
+    private var currentLocation: String = "Unknown"
+    private var expectedDeliveryDateTimestamp: Long = 0L
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
-    private var expectedDeliveryDateTimestamp: Long = 0
-    private var currentLocation: String = ""
-
-    fun getId(): String = id
-    fun getStatus(): String = status
-    fun getUpdateHistory(): List<ShippingUpdate> = updateHistory
-    fun getNotes(): List<String> = notes
 
     fun updateStatus(newStatus: String, timestamp: Long) {
-        val previous = status
+        updateHistory.add(ShippingUpdate(status, newStatus, timestamp))
         status = newStatus
-        updateHistory.add(ShippingUpdate(previous, newStatus, timestamp))
-        println("Shipment $id went from $previous to $newStatus at $timestamp")
-        // notifyObservers() — add later
+    }
+
+    fun updateLocation(location: String) {
+        currentLocation = location
+    }
+
+    fun delay(newExpected: Long) {
+        expectedDeliveryDateTimestamp = newExpected
+    }
+
+    fun addNote(note: String) {
+        notes.add(note)
+    }
+
+    // For testing output
+    fun debugPrint() {
+        println("Shipment $id: status=$status, location=$currentLocation, expected=$expectedDeliveryDateTimestamp")
+        println("Notes: $notes")
+        println("Updates:")
+        updateHistory.forEach {
+            println("  ${it.previousStatus} -> ${it.newStatus} at ${it.timestamp}")
+        }
     }
 }

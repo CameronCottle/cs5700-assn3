@@ -4,7 +4,7 @@ import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
 
 class CreatedStrategy : UpdateStrategy {
-    override fun apply(shipment: Shipment, update: ShipmentUpdateRecord) {
+    override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
         shipment.updateStatus("created", update.timestamp)
     }
 }

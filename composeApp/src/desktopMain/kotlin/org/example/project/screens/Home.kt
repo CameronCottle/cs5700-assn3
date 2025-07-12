@@ -15,4 +15,3 @@ fun Home(navigation: ComposeNavigation) {
     }
     Text("Shipment simulation is running...")
 }
- 
