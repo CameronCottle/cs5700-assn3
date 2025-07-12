@@ -1,21 +1,18 @@
 package org.example.project.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import org.example.project.navigation.Destinations
-import org.example.project.navigation.Navigation
+import androidx.compose.runtime.LaunchedEffect
+import org.example.project.simulator.TrackingSimulator
+import java.io.File
+import androidx.compose.material3.Text
+import org.example.project.navigation.ComposeNavigation
 
 @Composable
-fun Home (navigation: Navigation) {
-
-    Column {
-        Text("Home Page")
-        Button(onClick = {
-            navigation.goToSettings()
-        }) {
-            Text("Go to Settings")
-        }
+fun Home(navigation: ComposeNavigation) {
+    LaunchedEffect(Unit) {
+        val file = File("test.txt")
+        TrackingSimulator.runSimulation(file)
     }
+    Text("Shipment simulation is running...")
 }
+ 

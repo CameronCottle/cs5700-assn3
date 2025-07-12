@@ -1,4 +1,8 @@
 package org.example.project.model
 
-class ShipmentUpdateRecord {
-}
+data class ShipmentUpdateRecord(
+    val type: String,
+    val shipmentId: String,
+    val timestamp: Long,
+    val extra: String? = null
+)
