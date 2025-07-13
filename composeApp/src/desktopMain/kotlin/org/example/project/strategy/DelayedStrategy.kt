@@ -5,6 +5,8 @@ import org.example.project.model.ShipmentUpdateRecord
 
 class DelayedStrategy : UpdateStrategy {
     override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
-        shipment.delay(update.extra?.toLongOrNull() ?: 0L)
+        val newExpected = update.extra?.toLongOrNull() ?: 0L
+        shipment.delay(newExpected)
+        shipment.updateStatus("delayed", update.timestamp)
     }
 }
