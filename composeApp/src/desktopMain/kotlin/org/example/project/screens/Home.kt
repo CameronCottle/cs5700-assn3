@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 import org.example.project.navigation.ComposeNavigation
 import org.example.project.view.TrackerViewHelper
 import org.example.project.view.ViewUpdate
+import org.example.project.simulator.TrackingSimulator
+import java.io.File
+
 
 @Composable
 fun Home(navigation: ComposeNavigation) {
@@ -19,6 +22,17 @@ fun Home(navigation: ComposeNavigation) {
     var errorText by remember { mutableStateOf("") }
 
     val shipments = TrackerViewHelper.trackedShipments
+
+    LaunchedEffect(Unit) {
+        val file = File("test.txt")
+        if (file.exists()) {
+            println("Starting simulation from test.txt...")
+            TrackingSimulator.runSimulation(file)
+        } else {
+            println("ERROR: test.txt file not found.")
+        }
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -37,10 +51,11 @@ fun Home(navigation: ComposeNavigation) {
             Button(onClick = {
                 coroutineScope.launch {
                     val success = TrackerViewHelper.trackShipment(inputId)
-                    if (!success) {
-                        errorText = "Shipment $inputId does not exist or hasn't been created yet."
+                    errorText = if (!success) {
+                        println(errorText)
+                        "Shipment $inputId does not exist or hasn't been created yet."
                     } else {
-                        errorText = ""
+                        ""
                     }
                     inputId = ""
                 }
@@ -93,6 +108,10 @@ fun ShipmentCard(update: ViewUpdate) {
                 update.updates.forEach { updateText ->
                     Text("• $updateText")
                 }
+            }
+            Text("Notes:")
+            update.notes.forEach { note ->
+                Text("• $note")
             }
         }
     }

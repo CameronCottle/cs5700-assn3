@@ -5,6 +5,9 @@ import org.example.project.model.ShipmentUpdateRecord
 
 class CreatedStrategy : UpdateStrategy {
     override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
-        shipment.updateStatus("created", update.timestamp)
+        if (shipment.getStatus() != "created") {
+            shipment.updateStatus("created", update.timestamp)
+        }
     }
 }
+

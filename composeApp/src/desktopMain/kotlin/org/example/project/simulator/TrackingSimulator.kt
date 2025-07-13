@@ -33,14 +33,13 @@ object TrackingSimulator {
         for (line in file.readLines()) {
             val update = parseLine(line)
             val shipment = shipments.getOrPut(update.shipmentId) {
-                val s = Shipment(update.shipmentId)
-                s.addObserver(ConsoleLoggerObserver()) // Add observer
-                s
+                Shipment(update.shipmentId)
             }
             strategies[update.type]?.applyUpdate(shipment, update)
             delay(1000L)
         }
     }
+
 
     private fun parseLine(line: String): ShipmentUpdateRecord {
         val parts = line.split(",", limit = 4)
@@ -53,7 +52,11 @@ object TrackingSimulator {
     }
 
     fun getShipment(id: String): Shipment? {
-        return shipments[id]
+        val cleanId = id.trim()
+        println("Looking for shipment ID: '$cleanId'")
+        println("Available keys: ${shipments.keys}")
+        return shipments[cleanId]
     }
+
 
 }
