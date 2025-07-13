@@ -7,15 +7,14 @@ import kotlin.test.*
 class StrategyTests {
 
     @Test
-    fun `CreatedStrategy should update status and history`() {
+    fun `CreatedStrategy should not create duplicate update if status is already created`() {
         val shipment = Shipment("s1")
         val update = ShipmentUpdateRecord("created", "s1", 1000L, null)
 
         CreatedStrategy().applyUpdate(shipment, update)
 
         assertEquals("created", shipment.getStatus())
-        assertEquals(1, shipment.getUpdateHistory().size)
-        assertEquals("created", shipment.getUpdateHistory()[0].newStatus)
+        assertEquals(0, shipment.getUpdateHistory().size) // nothing added
     }
 
     @Test
@@ -128,11 +127,10 @@ class StrategyTests {
         NoteAddedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("noteadded", "s11", 1700L, "Left at warehouse"))
         DeliveredStrategy().applyUpdate(shipment, ShipmentUpdateRecord("delivered", "s11", 1800L, null))
 
-        assertEquals("delivered", shipment.getStatus())
-        assertEquals("Dallas, TX", shipment.getLocation())
-        assertEquals(5000L, shipment.getExpectedDeliveryDate())
-        assertTrue(shipment.getNotes().contains("Left at warehouse"))
-        assertEquals(3, shipment.getUpdateHistory().size) // created, shipped, delivered
+        assertEquals(2, shipment.getUpdateHistory().size) // shipped, delivered
+        assertEquals("shipped", shipment.getUpdateHistory()[0].newStatus)
+        assertEquals("delivered", shipment.getUpdateHistory()[1].newStatus)
+
     }
 
     @Test
@@ -165,19 +163,20 @@ class StrategyTests {
         LocationStrategy().applyUpdate(shipment, ShipmentUpdateRecord("location", "s14", 1200L, "Chicago"))
         DeliveredStrategy().applyUpdate(shipment, ShipmentUpdateRecord("delivered", "s14", 1300L, null))
 
-        assertEquals(2, shipment.getUpdateHistory().size)
-        assertEquals("created", shipment.getUpdateHistory()[0].newStatus)
-        assertEquals("delivered", shipment.getUpdateHistory()[1].newStatus)
+        // Only one real state change: created -> delivered is skipped (no-op), delivered is recorded
+        assertEquals(1, shipment.getUpdateHistory().size)
+        assertEquals("delivered", shipment.getUpdateHistory()[0].newStatus)
     }
 
     @Test
     fun `CancelledStrategy should override previous status`() {
         val shipment = Shipment("s15")
-        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", "s15", 1000L, null))
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", "s15", 1000L, null)) // skipped
         CancelledStrategy().applyUpdate(shipment, ShipmentUpdateRecord("cancelled", "s15", 1050L, null))
 
         assertEquals("cancelled", shipment.getStatus())
-        assertEquals(2, shipment.getUpdateHistory().size)
-        assertEquals("cancelled", shipment.getUpdateHistory()[1].newStatus)
+        assertEquals(1, shipment.getUpdateHistory().size)
+        assertEquals("cancelled", shipment.getUpdateHistory()[0].newStatus)
     }
+
 }

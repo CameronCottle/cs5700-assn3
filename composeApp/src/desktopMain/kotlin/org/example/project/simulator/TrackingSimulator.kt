@@ -3,7 +3,6 @@ package org.example.project.simulator
 import kotlinx.coroutines.delay
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
-import org.example.project.observer.ConsoleLoggerObserver
 import org.example.project.strategy.CancelledStrategy
 import org.example.project.strategy.CreatedStrategy
 import org.example.project.strategy.DelayedStrategy
@@ -58,5 +57,7 @@ object TrackingSimulator {
         return shipments[cleanId]
     }
 
-
+    fun registerShipment(id: String, shipment: Shipment) {
+        shipments[id] = shipment
+    }
 }

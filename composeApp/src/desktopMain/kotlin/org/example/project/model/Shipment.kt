@@ -1,6 +1,5 @@
 package org.example.project.model
 
-import org.example.project.model.ShippingUpdate
 import org.example.project.observer.ObservableShipment
 import org.example.project.observer.ShipmentObserver
 
@@ -32,6 +31,13 @@ class Shipment(val id: String) : ObservableShipment {
     }
 
     fun updateStatus(newStatus: String, timestamp: Long) {
+        println("updateStatus called with $newStatus at $timestamp (current = $status)")
+
+        if (this.status == newStatus) {
+            println("Skipping update: status already '$newStatus'")
+            return
+        }
+
         val update = ShippingUpdate(
             previousStatus = this.status,
             newStatus = newStatus,
@@ -41,6 +47,8 @@ class Shipment(val id: String) : ObservableShipment {
         this.status = newStatus
         notifyObservers()
     }
+
+
 
     fun updateLocation(location: String) {
         currentLocation = location

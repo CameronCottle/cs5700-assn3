@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 object Destinations {
     @Serializable
-    object  Home
+    object  Tracker
     @Serializable
     object  Settings
 }

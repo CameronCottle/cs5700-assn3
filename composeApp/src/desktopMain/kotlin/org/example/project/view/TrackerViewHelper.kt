@@ -9,6 +9,7 @@ import org.example.project.simulator.TrackingSimulator
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.text.set
 
 object TrackerViewHelper : ShipmentObserver {
 
