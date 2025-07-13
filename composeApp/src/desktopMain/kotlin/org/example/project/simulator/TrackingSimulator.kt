@@ -24,7 +24,7 @@ object TrackingSimulator {
         "location" to LocationStrategy(),
         "cancelled" to CancelledStrategy(),
         "lost" to LostStrategy(),
-        "note_added" to NoteAddedStrategy(),
+        "noteadded" to NoteAddedStrategy(),
         "delayed" to DelayedStrategy(),
         "delivered" to DeliveredStrategy()
     )

@@ -97,17 +97,9 @@ fun ShipmentCard(update: ViewUpdate) {
             Text("Status: ${update.status}")
             Text("Location: ${update.location}")
             Text("Expected Delivery: ${update.expectedDeliveryDate}")
-            if (update.notes.isNotEmpty()) {
-                Text("Notes:")
-                update.notes.forEach { note ->
-                    Text("- $note")
-                }
-            }
-            if (update.updates.isNotEmpty()) {
-                Text("Updates:")
-                update.updates.forEach { updateText ->
-                    Text("• $updateText")
-                }
+            Text("Updates:")
+            update.updates.forEach { updateText ->
+                Text("• $updateText")
             }
             Text("Notes:")
             update.notes.forEach { note ->

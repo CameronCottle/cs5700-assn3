@@ -11,7 +11,6 @@ class Shipment(val id: String) : ObservableShipment {
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
 
-//    fun getId(): String = id
     fun getStatus() = status
     fun getLocation() = currentLocation
     fun getExpectedDeliveryDate() = expectedDeliveryDateTimestamp
