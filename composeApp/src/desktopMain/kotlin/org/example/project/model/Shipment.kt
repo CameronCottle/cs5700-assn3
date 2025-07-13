@@ -32,14 +32,4 @@ class Shipment(val id: String) {
     fun addNote(note: String) {
         notes.add(note)
     }
-
-    // For testing output
-    fun debugPrint() {
-        println("Shipment $id: status=$status, location=$currentLocation, expected=$expectedDeliveryDateTimestamp")
-        println("Notes: $notes")
-        println("Updates:")
-        updateHistory.forEach {
-            println("  ${it.previousStatus} -> ${it.newStatus} at ${it.timestamp}")
-        }
-    }
 }

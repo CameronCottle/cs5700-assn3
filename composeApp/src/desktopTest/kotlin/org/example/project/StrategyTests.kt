@@ -117,4 +117,67 @@ class StrategyTests {
         assertEquals("delayed", shipment.getStatus())
         assertEquals(0L, shipment.getExpectedDeliveryDate())
     }
+
+    @Test
+    fun `Shipment should handle multiple sequential updates correctly`() {
+        val shipment = Shipment("s11")
+
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", "s11", 1000L, null))
+        ShippedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("shipped", "s11", 1500L, "5000"))
+        LocationStrategy().applyUpdate(shipment, ShipmentUpdateRecord("location", "s11", 1600L, "Dallas, TX"))
+        NoteAddedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("noteadded", "s11", 1700L, "Left at warehouse"))
+        DeliveredStrategy().applyUpdate(shipment, ShipmentUpdateRecord("delivered", "s11", 1800L, null))
+
+        assertEquals("delivered", shipment.getStatus())
+        assertEquals("Dallas, TX", shipment.getLocation())
+        assertEquals(5000L, shipment.getExpectedDeliveryDate())
+        assertTrue(shipment.getNotes().contains("Left at warehouse"))
+        assertEquals(3, shipment.getUpdateHistory().size) // created, shipped, delivered
+    }
+
+    @Test
+    fun `NoteAddedStrategy should ignore empty note`() {
+        val shipment = Shipment("s12")
+        val update = ShipmentUpdateRecord("note_added", "s12", 5100L, "")
+
+        NoteAddedStrategy().applyUpdate(shipment, update)
+
+        assertTrue(shipment.getNotes().isEmpty())
+    }
+
+    @Test
+    fun `LocationStrategy should ignore null location`() {
+        val shipment = Shipment("s13")
+        val update = ShipmentUpdateRecord("location", "s13", 5200L, null)
+
+        LocationStrategy().applyUpdate(shipment, update)
+
+        assertEquals("Unknown", shipment.getLocation())
+        assertEquals(0, shipment.getUpdateHistory().size)
+    }
+
+    @Test
+    fun `Only status-changing strategies should appear in update history`() {
+        val shipment = Shipment("s14")
+
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", "s14", 1000L, null))
+        NoteAddedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("noteadded", "s14", 1100L, "Label error"))
+        LocationStrategy().applyUpdate(shipment, ShipmentUpdateRecord("location", "s14", 1200L, "Chicago"))
+        DeliveredStrategy().applyUpdate(shipment, ShipmentUpdateRecord("delivered", "s14", 1300L, null))
+
+        assertEquals(2, shipment.getUpdateHistory().size)
+        assertEquals("created", shipment.getUpdateHistory()[0].newStatus)
+        assertEquals("delivered", shipment.getUpdateHistory()[1].newStatus)
+    }
+
+    @Test
+    fun `CancelledStrategy should override previous status`() {
+        val shipment = Shipment("s15")
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", "s15", 1000L, null))
+        CancelledStrategy().applyUpdate(shipment, ShipmentUpdateRecord("cancelled", "s15", 1050L, null))
+
+        assertEquals("cancelled", shipment.getStatus())
+        assertEquals(2, shipment.getUpdateHistory().size)
+        assertEquals("cancelled", shipment.getUpdateHistory()[1].newStatus)
+    }
 }

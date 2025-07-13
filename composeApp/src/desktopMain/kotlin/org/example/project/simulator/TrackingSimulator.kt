@@ -34,8 +34,6 @@ object TrackingSimulator {
             println("Processing line: $line")
             val shipment = shipments.getOrPut(update.shipmentId) { Shipment(update.shipmentId) }
             strategies[update.type]?.applyUpdate(shipment, update)
-            shipment.debugPrint()
-            println("----------")
             delay(1000L)
         }
     }
