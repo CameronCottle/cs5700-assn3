@@ -11,6 +11,7 @@ class Shipment(val id: String) : ObservableShipment {
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
 
+//    fun getId(): String = id
     fun getStatus() = status
     fun getLocation() = currentLocation
     fun getExpectedDeliveryDate() = expectedDeliveryDateTimestamp
@@ -32,20 +33,31 @@ class Shipment(val id: String) : ObservableShipment {
     }
 
     fun updateStatus(newStatus: String, timestamp: Long) {
-        updateHistory.add(ShippingUpdate(status, newStatus, timestamp))
-        status = newStatus
+        val update = ShippingUpdate(
+            previousStatus = this.status,
+            newStatus = newStatus,
+            timestamp = timestamp
+        )
+        updateHistory.add(update)
+        this.status = newStatus
+        notifyObservers()
     }
 
     fun updateLocation(location: String) {
         currentLocation = location
+        notifyObservers()
     }
 
     fun delay(newExpected: Long) {
         expectedDeliveryDateTimestamp = newExpected
+        notifyObservers()
     }
 
     fun addNote(note: String) {
-        notes.add(note)
+        if (note.isNotBlank()) {
+            notes.add(note)
+            notifyObservers()
+        }
     }
 
 }

@@ -51,4 +51,9 @@ object TrackingSimulator {
             extra = parts.getOrNull(3)
         )
     }
+
+    fun getShipment(id: String): Shipment? {
+        return shipments[id]
+    }
+
 }
