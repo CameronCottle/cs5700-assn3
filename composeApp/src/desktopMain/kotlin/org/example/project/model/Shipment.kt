@@ -9,6 +9,13 @@ class Shipment(val id: String) {
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
 
+    fun getStatus() = status
+    fun getLocation() = currentLocation
+    fun getExpectedDeliveryDate() = expectedDeliveryDateTimestamp
+    fun getNotes(): List<String> = notes.toList()
+    fun getUpdateHistory(): List<ShippingUpdate> = updateHistory.toList()
+
+
     fun updateStatus(newStatus: String, timestamp: Long) {
         updateHistory.add(ShippingUpdate(status, newStatus, timestamp))
         status = newStatus
