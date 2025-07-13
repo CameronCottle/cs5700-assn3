@@ -8,7 +8,6 @@ class LocationStrategy : UpdateStrategy {
         val newLocation = update.extra
         if (!newLocation.isNullOrBlank()) {
             shipment.updateLocation(newLocation)
-            println("Updated location of ${shipment.id} to $newLocation at ${update.timestamp}")
         }
     }
 }

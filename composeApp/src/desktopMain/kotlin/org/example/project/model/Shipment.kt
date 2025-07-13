@@ -1,8 +1,10 @@
 package org.example.project.model
 
 import org.example.project.model.ShippingUpdate
+import org.example.project.observer.ObservableShipment
+import org.example.project.observer.ShipmentObserver
 
-class Shipment(val id: String) {
+class Shipment(val id: String) : ObservableShipment {
     private var status: String = "created"
     private var currentLocation: String = "Unknown"
     private var expectedDeliveryDateTimestamp: Long = 0L
@@ -15,6 +17,19 @@ class Shipment(val id: String) {
     fun getNotes(): List<String> = notes.toList()
     fun getUpdateHistory(): List<ShippingUpdate> = updateHistory.toList()
 
+    private val observers = mutableListOf<ShipmentObserver>()
+
+    override fun addObserver(observer: ShipmentObserver) {
+        observers.add(observer)
+    }
+
+    override fun removeObserver(observer: ShipmentObserver) {
+        observers.remove(observer)
+    }
+
+    override fun notifyObservers() {
+        observers.forEach { it.onShipmentUpdated(this) }
+    }
 
     fun updateStatus(newStatus: String, timestamp: Long) {
         updateHistory.add(ShippingUpdate(status, newStatus, timestamp))
@@ -32,4 +47,5 @@ class Shipment(val id: String) {
     fun addNote(note: String) {
         notes.add(note)
     }
+
 }

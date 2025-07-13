@@ -10,6 +10,5 @@ class ShippedStrategy : UpdateStrategy {
             shipment.delay(newExpectedDate)
         }
         shipment.updateStatus("shipped", update.timestamp)
-        println("Applied SHIPPED to ${shipment.id}")
     }
 }

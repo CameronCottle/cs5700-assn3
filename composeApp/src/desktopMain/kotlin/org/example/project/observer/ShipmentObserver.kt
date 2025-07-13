@@ -1,4 +1,7 @@
 package org.example.project.observer
 
-class ShipmentObserver {
+import org.example.project.model.Shipment
+
+interface ShipmentObserver {
+    fun onShipmentUpdated(shipment: Shipment)
 }

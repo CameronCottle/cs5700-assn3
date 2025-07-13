@@ -3,6 +3,7 @@ package org.example.project.simulator
 import kotlinx.coroutines.delay
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
+import org.example.project.observer.ConsoleLoggerObserver
 import org.example.project.strategy.CancelledStrategy
 import org.example.project.strategy.CreatedStrategy
 import org.example.project.strategy.DelayedStrategy
@@ -31,8 +32,11 @@ object TrackingSimulator {
     suspend fun runSimulation(file: File) {
         for (line in file.readLines()) {
             val update = parseLine(line)
-            println("Processing line: $line")
-            val shipment = shipments.getOrPut(update.shipmentId) { Shipment(update.shipmentId) }
+            val shipment = shipments.getOrPut(update.shipmentId) {
+                val s = Shipment(update.shipmentId)
+                s.addObserver(ConsoleLoggerObserver()) // Add observer
+                s
+            }
             strategies[update.type]?.applyUpdate(shipment, update)
             delay(1000L)
         }
