@@ -28,18 +28,21 @@ object TrackingSimulator {
         "delivered" to DeliveredStrategy()
     )
 
+    // run the simulation
     suspend fun runSimulation(file: File) {
+        // read each line, parse it, and delay for 1 second
         for (line in file.readLines()) {
             val update = parseLine(line)
             val shipment = shipments.getOrPut(update.shipmentId) {
                 Shipment(update.shipmentId)
             }
+            // based on the update type, apply its strategy
             strategies[update.type]?.applyUpdate(shipment, update)
             delay(1000L)
         }
     }
 
-
+    // parse each line and return a ShipmentUpdateRecord
     private fun parseLine(line: String): ShipmentUpdateRecord {
         val parts = line.split(",", limit = 4)
         return ShipmentUpdateRecord(
@@ -50,13 +53,13 @@ object TrackingSimulator {
         )
     }
 
-    fun getShipment(id: String): Shipment? {
+    // public function so we can check if it exists on the UI
+    fun findShipment(id: String): Shipment? {
         val cleanId = id.trim()
-        println("Looking for shipment ID: '$cleanId'")
-        println("Available keys: ${shipments.keys}")
         return shipments[cleanId]
     }
 
+    // THIS IS A TESTING ONLY FUNCTION. This is necessary to test the adding of a shipment
     fun registerShipment(id: String, shipment: Shipment) {
         shipments[id] = shipment
     }

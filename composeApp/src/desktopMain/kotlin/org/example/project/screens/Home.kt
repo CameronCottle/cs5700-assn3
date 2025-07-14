@@ -14,26 +14,28 @@ import org.example.project.view.ViewUpdate
 import org.example.project.simulator.TrackingSimulator
 import java.io.File
 
-
+// This is the home (and only) page to this application
 @Composable
 fun Home(navigation: ComposeNavigation) {
+    // to launch coroutines that are automatically cancelled when home is closed
     val coroutineScope = rememberCoroutineScope()
+    // input from user
     var inputId by remember { mutableStateOf("") }
+    // when a shipment ID is not valid
     var errorText by remember { mutableStateOf("") }
 
+    // shipments being tracked
     val shipments = TrackerViewHelper.trackedShipments
 
+    // start the simulation
     LaunchedEffect(Unit) {
         val file = File("test.txt")
-        if (file.exists()) {
-            println("Starting simulation from test.txt...")
-            TrackingSimulator.runSimulation(file)
-        } else {
-            println("ERROR: test.txt file not found.")
-        }
+        TrackingSimulator.runSimulation(file)
     }
 
-
+    // I used AI to help me with the UI for two reasons:
+    // 1. I am not familiar with building UI with Kotlin
+    // 2. I am bad at making UI look good
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
@@ -86,6 +88,7 @@ fun Home(navigation: ComposeNavigation) {
     }
 }
 
+// the card to be displayed for every shipment being tracked
 @Composable
 fun ShipmentCard(update: ViewUpdate) {
     Card(modifier = Modifier

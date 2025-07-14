@@ -13,7 +13,7 @@ class ShipmentTests {
     }
 
     @Test
-    fun `Initial shipment status should be created`() {
+    fun `Initial shipment status should be empty`() {
         assertEquals("created", shipment.getStatus())
     }
 

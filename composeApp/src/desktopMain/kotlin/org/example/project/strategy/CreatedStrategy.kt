@@ -8,10 +8,6 @@ class CreatedStrategy : UpdateStrategy {
         if (shipment.getStatus() != "created") {
             println("CreatedStrategy: applying update")
             shipment.updateStatus("created", update.timestamp)
-        } else {
-            println("CreatedStrategy: skipping update because status is already 'created'")
         }
     }
 }
-
-

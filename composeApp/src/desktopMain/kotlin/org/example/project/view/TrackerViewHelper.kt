@@ -25,17 +25,16 @@ object TrackerViewHelper : ShipmentUpdateListener {
     }
 
     suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
-        val shipment = TrackingSimulator.getShipment(id)
-        println(shipment)
+        val shipment = TrackingSimulator.findShipment(id)
         return@withContext if (shipment != null) {
+            activeTrackIds.add(id)  // ✅ Add it before any updates happen
             shipment.addObserver(this@TrackerViewHelper)
-            activeTrackIds.add(id)
-            println(activeTrackIds)
             trackedShipments[id] = convertToViewUpdate(shipment)
             true
         } else {
             false
         }
+
     }
 
     private fun formatTimestamp(timestamp: Long): String {
@@ -44,7 +43,7 @@ object TrackerViewHelper : ShipmentUpdateListener {
     }
 
     fun stopTracking(id: String) {
-        val shipment = TrackingSimulator.getShipment(id)
+        val shipment = TrackingSimulator.findShipment(id)
         shipment?.removeObserver(this)
         activeTrackIds.remove(id)
         trackedShipments.remove(id)
