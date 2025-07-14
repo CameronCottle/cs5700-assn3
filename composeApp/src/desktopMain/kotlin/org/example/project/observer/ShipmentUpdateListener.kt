@@ -2,6 +2,6 @@ package org.example.project.observer
 
 import org.example.project.model.Shipment
 
-interface ShipmentObserver {
+interface ShipmentUpdateListener {
     fun onShipmentUpdated(shipment: Shipment)
 }

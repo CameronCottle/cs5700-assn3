@@ -4,14 +4,13 @@ import androidx.compose.runtime.mutableStateMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.example.project.model.Shipment
-import org.example.project.observer.ShipmentObserver
+import org.example.project.observer.ShipmentUpdateListener
 import org.example.project.simulator.TrackingSimulator
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.text.set
 
-object TrackerViewHelper : ShipmentObserver {
+object TrackerViewHelper : ShipmentUpdateListener {
 
     // Public observable map for Compose UI
     val trackedShipments = mutableStateMapOf<String, ViewUpdate>()
@@ -20,8 +19,8 @@ object TrackerViewHelper : ShipmentObserver {
     private val activeTrackIds = mutableSetOf<String>()
 
     override fun onShipmentUpdated(shipment: Shipment) {
-        if (shipment.id in activeTrackIds) {
-            trackedShipments[shipment.id] = convertToViewUpdate(shipment)
+        if (shipment.getId() in activeTrackIds) {
+            trackedShipments[shipment.getId()] = convertToViewUpdate(shipment)
         }
     }
 
@@ -53,7 +52,7 @@ object TrackerViewHelper : ShipmentObserver {
 
     private fun convertToViewUpdate(shipment: Shipment): ViewUpdate {
         return ViewUpdate(
-            id = shipment.id,
+            id = shipment.getId(),
             status = shipment.getStatus(),
             location = shipment.getLocation(),
             expectedDeliveryDate = formatTimestamp(shipment.getExpectedDeliveryDate()),

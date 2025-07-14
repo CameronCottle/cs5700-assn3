@@ -1,6 +1,6 @@
 package org.example.project.model
 
-import org.example.project.observer.ShipmentObserver
+import org.example.project.observer.ShipmentUpdateListener
 import kotlin.test.*
 
 class ShipmentTests {
@@ -73,7 +73,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on status update`() {
         var notified = false
-        val observer = object : ShipmentObserver {
+        val observer = object : ShipmentUpdateListener {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -86,7 +86,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on location update`() {
         var notified = false
-        val observer = object : ShipmentObserver {
+        val observer = object : ShipmentUpdateListener {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -99,7 +99,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on delay`() {
         var notified = false
-        val observer = object : ShipmentObserver {
+        val observer = object : ShipmentUpdateListener {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -112,7 +112,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on note added`() {
         var notified = false
-        val observer = object : ShipmentObserver {
+        val observer = object : ShipmentUpdateListener {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -125,7 +125,7 @@ class ShipmentTests {
     @Test
     fun `Removed observers should not be notified`() {
         var notified = false
-        val observer = object : ShipmentObserver {
+        val observer = object : ShipmentUpdateListener {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }

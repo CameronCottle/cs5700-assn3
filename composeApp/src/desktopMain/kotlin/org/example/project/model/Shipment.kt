@@ -1,28 +1,32 @@
 package org.example.project.model
 
-import org.example.project.observer.ObservableShipment
-import org.example.project.observer.ShipmentObserver
+import org.example.project.observer.ShipmentNotifier
+import org.example.project.observer.ShipmentUpdateListener
 
-class Shipment(val id: String) : ObservableShipment {
+class Shipment(private val id: String) : ShipmentNotifier {
+    // initialize as created and unknown because it should always be status created first, and it doesn't have a location before it is shipped
     private var status: String = "created"
     private var currentLocation: String = "Unknown"
     private var expectedDeliveryDateTimestamp: Long = 0L
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
 
+    // public getter functions
+    fun getId() = id
     fun getStatus() = status
     fun getLocation() = currentLocation
     fun getExpectedDeliveryDate() = expectedDeliveryDateTimestamp
     fun getNotes(): List<String> = notes.toList()
     fun getUpdateHistory(): List<ShippingUpdate> = updateHistory.toList()
 
-    private val observers = mutableListOf<ShipmentObserver>()
+    // list of observers to send notifications to
+    private val observers = mutableListOf<ShipmentUpdateListener>()
 
-    override fun addObserver(observer: ShipmentObserver) {
+    override fun addObserver(observer: ShipmentUpdateListener) {
         observers.add(observer)
     }
 
-    override fun removeObserver(observer: ShipmentObserver) {
+    override fun removeObserver(observer: ShipmentUpdateListener) {
         observers.remove(observer)
     }
 
@@ -30,13 +34,8 @@ class Shipment(val id: String) : ObservableShipment {
         observers.forEach { it.onShipmentUpdated(this) }
     }
 
+    // below are the methods to update the information about a shipment. It is important to notify the observers after an update
     fun updateStatus(newStatus: String, timestamp: Long) {
-        println("updateStatus called with $newStatus at $timestamp (current = $status)")
-
-        if (this.status == newStatus) {
-            println("Skipping update: status already '$newStatus'")
-            return
-        }
 
         val update = ShippingUpdate(
             previousStatus = this.status,
@@ -47,8 +46,6 @@ class Shipment(val id: String) : ObservableShipment {
         this.status = newStatus
         notifyObservers()
     }
-
-
 
     fun updateLocation(location: String) {
         currentLocation = location
