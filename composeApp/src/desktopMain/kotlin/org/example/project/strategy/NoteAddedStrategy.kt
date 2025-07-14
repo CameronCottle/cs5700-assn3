@@ -6,7 +6,6 @@ import org.example.project.model.ShipmentUpdateRecord
 class NoteAddedStrategy : UpdateStrategy {
     override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
         val note = update.extra
-        println(note)
         if (!note.isNullOrBlank()) {
             shipment.addNote(note)
         }
