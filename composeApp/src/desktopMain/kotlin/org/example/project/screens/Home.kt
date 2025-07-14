@@ -16,7 +16,7 @@ import java.io.File
 
 
 @Composable
-fun Tracker(navigation: ComposeNavigation) {
+fun Home(navigation: ComposeNavigation) {
     val coroutineScope = rememberCoroutineScope()
     var inputId by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }

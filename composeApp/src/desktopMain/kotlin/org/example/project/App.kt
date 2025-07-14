@@ -23,7 +23,7 @@ import assn2.composeapp.generated.resources.Res
 import assn2.composeapp.generated.resources.compose_multiplatform
 import org.example.project.navigation.ComposeNavigation
 import org.example.project.navigation.Destinations
-import org.example.project.screens.Tracker
+import org.example.project.screens.Home
 
 @Composable
 @Preview
@@ -34,9 +34,9 @@ fun App() {
 
         NavHost(
             navController,
-            startDestination = Destinations.Tracker
+            startDestination = Destinations.Home
         ) {
-            composable<Destinations.Tracker> {
+            composable<Destinations.Home> {
                 Home(navigation)
             }
         }
