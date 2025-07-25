@@ -10,10 +10,10 @@ plugins {
 
 kotlin {
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -26,7 +26,21 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta03")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") // or latest
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+            // Ktor Server
+            implementation("io.ktor:ktor-server-core:3.2.2")
+            implementation("io.ktor:ktor-server-netty:3.2.2")
+            implementation("io.ktor:ktor-server-content-negotiation:3.2.2")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.2")
+            implementation("io.ktor:ktor-server-call-logging:3.2.2")
+            implementation("io.ktor:ktor-server-html-builder:3.2.2")
+            implementation("io.ktor:ktor-server-resources:3.2.2")
+
+
+            // Kotlinx Serialization
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -34,6 +48,21 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+            // Ktor Server
+            implementation("io.ktor:ktor-server-core:3.2.2")
+            implementation("io.ktor:ktor-server-netty:3.2.2")
+            implementation("io.ktor:ktor-server-content-negotiation:3.2.2")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.2")
+            implementation("io.ktor:ktor-server-call-logging:3.2.2")
+            implementation("io.ktor:ktor-server-html-builder:3.2.2")
+            implementation("io.ktor:ktor-server-resources:3.2.2")
+
+
+
+            // Kotlinx Serialization
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
         }
     }
 }

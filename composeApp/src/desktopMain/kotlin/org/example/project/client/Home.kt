@@ -1,4 +1,4 @@
-package org.example.project.screens
+package org.example.project.client
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,10 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.example.project.navigation.ComposeNavigation
-import org.example.project.view.TrackerViewHelper
-import org.example.project.view.ViewUpdate
-import org.example.project.simulator.TrackingSimulator
-import java.io.File
+import org.example.project.client.TrackerViewHelper
+import org.example.project.client.ViewUpdate
 
 // This is the home (and only) page to this application
 @Composable
@@ -28,10 +26,10 @@ fun Home(navigation: ComposeNavigation) {
     val shipments = TrackerViewHelper.trackedShipments
 
     // start the simulation
-    LaunchedEffect(Unit) {
-        val file = File("test.txt")
-        TrackingSimulator.runSimulation(file)
-    }
+//    LaunchedEffect(Unit) {
+//        val file = File("test.txt")
+//        TrackingServer.runSimulation(file)
+//    }
 
     // I used AI to help me with the UI for two reasons:
     // 1. I am not familiar with building UI with Kotlin

@@ -1,11 +1,11 @@
-package org.example.project.screens
+package org.example.project.client
 
 import kotlinx.coroutines.test.runTest
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
-import org.example.project.simulator.TrackingSimulator
+import org.example.project.server.TrackingServer
 import org.example.project.strategy.*
-import org.example.project.view.TrackerViewHelper
+import org.example.project.client.TrackerViewHelper
 import kotlin.test.*
 
 class TrackerViewHelperTests {
@@ -24,7 +24,7 @@ class TrackerViewHelperTests {
         val shipment = Shipment(id)
         CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 1000L, null))
 
-        TrackingSimulator.registerShipment(id, shipment)
+        TrackingServer.registerShipment(id, shipment)
 
         val result = TrackerViewHelper.trackShipment(id)
         assertTrue(result)
@@ -41,7 +41,7 @@ class TrackerViewHelperTests {
         val id = "s2"
         val shipment = Shipment(id)
         CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 1000L, null))
-        TrackingSimulator.registerShipment(id, shipment)
+        TrackingServer.registerShipment(id, shipment)
 
         TrackerViewHelper.trackShipment(id)
         TrackerViewHelper.stopTracking(id)
@@ -55,7 +55,7 @@ class TrackerViewHelperTests {
         val id = "s3"
         val shipment = Shipment(id)
         CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 1000L, null))
-        TrackingSimulator.registerShipment(id, shipment)
+        TrackingServer.registerShipment(id, shipment)
 
         TrackerViewHelper.trackShipment(id)
 
@@ -71,7 +71,7 @@ class TrackerViewHelperTests {
         val id = "s4"
         val shipment = Shipment(id)
         CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 1000L, null))
-        TrackingSimulator.registerShipment(id, shipment)
+        TrackingServer.registerShipment(id, shipment)
 
         TrackerViewHelper.trackShipment(id)
         shipment.updateLocation("Chicago")

@@ -3,15 +3,13 @@ package org.example.project.model
 import org.example.project.observer.ShipmentNotifier
 import org.example.project.observer.ShipmentUpdateListener
 
-class Shipment(private val id: String) : ShipmentNotifier {
-    // initialize as created and unknown because it should always be status created first, and it doesn't have a location before it is shipped
+abstract class Shipment(private val id: String) : ShipmentNotifier {
     private var status: String = "created"
     private var currentLocation: String = "Unknown"
     private var expectedDeliveryDateTimestamp: Long = 0L
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
 
-    // public getter functions
     fun getId() = id
     fun getStatus() = status
     fun getLocation() = currentLocation
@@ -34,7 +32,7 @@ class Shipment(private val id: String) : ShipmentNotifier {
         observers.forEach { it.onShipmentUpdated(this) }
     }
 
-    // below are the methods to update the information about a shipment. It is important to notify the observers after an update
+    // below are the methods to update the information about a shipment. it is important to notify the observers after an update
     fun updateStatus(newStatus: String, timestamp: Long) {
 
         val update = ShippingUpdate(

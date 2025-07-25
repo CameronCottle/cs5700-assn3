@@ -1,4 +1,4 @@
-package org.example.project.view
+package org.example.project.client
 
 // Complete information of a shipment
 data class ViewUpdate(

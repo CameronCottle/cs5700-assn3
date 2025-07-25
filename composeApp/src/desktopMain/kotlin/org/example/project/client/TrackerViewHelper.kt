@@ -1,11 +1,12 @@
-package org.example.project.view
+package org.example.project.client
 
 import androidx.compose.runtime.mutableStateMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.example.project.model.Shipment
 import org.example.project.observer.ShipmentUpdateListener
-import org.example.project.simulator.TrackingSimulator
+import org.example.project.server.TrackingServer
+import org.example.project.client.ViewUpdate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -25,7 +26,7 @@ object TrackerViewHelper : ShipmentUpdateListener {
     }
 
     suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
-        val shipment = TrackingSimulator.findShipment(id)
+        val shipment = TrackingServer.findShipment(id)
         return@withContext if (shipment != null) {
             activeTrackIds.add(id)  // ✅ Add it before any updates happen
             shipment.addObserver(this@TrackerViewHelper)
@@ -43,7 +44,7 @@ object TrackerViewHelper : ShipmentUpdateListener {
     }
 
     fun stopTracking(id: String) {
-        val shipment = TrackingSimulator.findShipment(id)
+        val shipment = TrackingServer.findShipment(id)
         shipment?.removeObserver(this)
         activeTrackIds.remove(id)
         trackedShipments.remove(id)

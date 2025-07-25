@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shipment Command</title>
+</head>
+<body style="background-color:black; color:white; font-family:sans-serif; padding:2rem;">
+<h2>Enter Shipment Command</h2>
+<form id="commandForm">
+    <input type="text" id="commandInput" placeholder="created,s1,bulk,0" style="width:300px;" />
+    <button type="submit">Submit</button>
+</form>
+<p id="status"></p>
+
+<script>
+    document.getElementById("commandForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const command = document.getElementById("commandInput").value;
+        const res = await fetch("/update", {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: command
+        });
+
+        const statusText = await res.text();
+        document.getElementById("status").innerText = statusText;
+    });
+</script>
+</body>
+</html>
