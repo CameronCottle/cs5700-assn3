@@ -26,14 +26,13 @@ object TrackerViewHelper : ShipmentUpdateListener {
     suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
         val shipment = TrackingServer.findShipment(id)
         return@withContext if (shipment != null) {
-            val isNew = activeTrackIds.add(id) // true if not already present
+            val isNew = activeTrackIds.add(id)
             shipment.addObserver(this@TrackerViewHelper)
             trackedShipments[id] = convertToViewUpdate(shipment)
 
-            // Update trackedOrder
             synchronized(trackedOrder) {
-                trackedOrder.remove(id) // Ensure no duplicate
-                trackedOrder.add(0, id) // Add to top
+                trackedOrder.remove(id)
+                trackedOrder.add(0, id)
             }
 
             true
@@ -67,9 +66,7 @@ object TrackerViewHelper : ShipmentUpdateListener {
             notes = shipment.getNotes(),
             updates = shipment.getUpdateHistory().map {
                 "Shipment went from ${it.previousStatus} to ${it.newStatus} on ${formatTimestamp(it.timestamp)}"
-            },
-            isAbnormal = shipment.isAbnormal(),
-            abnormalMessage = shipment.getAbnormalMessage()
+            }
         )
     }
 }

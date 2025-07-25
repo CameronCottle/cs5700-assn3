@@ -9,20 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.example.project.navigation.ComposeNavigation
-import org.example.project.client.TrackerViewHelper
-import org.example.project.client.ViewUpdate
 
-// This is the home (and only) page to this application
 @Composable
 fun Home(navigation: ComposeNavigation) {
     val coroutineScope = rememberCoroutineScope()
     var inputId by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }
 
-    // shipments being tracked
     val shipments = TrackerViewHelper.trackedShipments
 
-    // Automatically clear error text after 7 seconds
     LaunchedEffect(errorText) {
         if (errorText.isNotEmpty()) {
             kotlinx.coroutines.delay(7000)
@@ -30,16 +25,17 @@ fun Home(navigation: ComposeNavigation) {
         }
     }
 
-    // I used AI to help me with the UI for two reasons:
-    // 1. I am not familiar with building UI with Kotlin
-    // 2. I am bad at making UI look good
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Text("Track a Shipment", style = MaterialTheme.typography.headlineSmall)
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             OutlinedTextField(
                 value = inputId,
                 onValueChange = { inputId = it },
@@ -90,7 +86,6 @@ fun Home(navigation: ComposeNavigation) {
     }
 }
 
-// the card to be displayed for every shipment being tracked
 @Composable
 fun ShipmentCard(update: ViewUpdate) {
     Card(
@@ -103,15 +98,6 @@ fun ShipmentCard(update: ViewUpdate) {
             Text("Status: ${update.status}")
             Text("Location: ${update.location}")
             Text("Expected Delivery: ${update.expectedDeliveryDate}")
-
-            if (update.isAbnormal && update.abnormalMessage != null) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    "Warning: ${update.abnormalMessage}",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
 
             Spacer(modifier = Modifier.height(8.dp))
             Text("Updates:")
@@ -127,4 +113,3 @@ fun ShipmentCard(update: ViewUpdate) {
         }
     }
 }
-

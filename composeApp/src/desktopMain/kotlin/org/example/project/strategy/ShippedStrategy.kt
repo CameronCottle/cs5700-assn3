@@ -5,7 +5,6 @@ import org.example.project.model.ExpressShipment
 import org.example.project.model.OvernightShipment
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
-import org.example.project.model.StandardShipment
 
 class ShippedStrategy : UpdateStrategy {
     override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
