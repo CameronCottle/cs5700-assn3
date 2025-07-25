@@ -19,7 +19,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "Assn2",
-        alwaysOnTop = false,
+        alwaysOnTop = true,
     ) {
         App()
     }

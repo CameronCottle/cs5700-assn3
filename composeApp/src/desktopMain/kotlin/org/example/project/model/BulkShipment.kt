@@ -2,15 +2,14 @@ package org.example.project.model
 
 class BulkShipment(id: String) : Shipment(id) {
     override fun delay(newExpected: Long) {
-        val creation = getCreationTime()
-        if (newExpected < creation + 3 * 24 * 60 * 60 * 1000) {
-            flagAbnormal("A bulk shipment was updated with a delivery date too soon (less than 3 days).")
-        }
-        super.delay(newExpected)
-    }
+        val createdAt = getCreationTime()
+        val threeDaysMillis = 3 * 24 * 60 * 60 * 1000L
 
-    private fun getCreationTime(): Long {
-        return getUpdateHistory().firstOrNull()?.timestamp ?: 0L
+        if (newExpected < createdAt + threeDaysMillis) {
+            addNote("Shipment is expected sooner than the 3-day requirement for bulk shipment.")
+        }
+
+        super.delay(newExpected)
     }
 }
 

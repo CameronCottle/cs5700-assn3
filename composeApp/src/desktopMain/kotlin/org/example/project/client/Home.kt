@@ -103,7 +103,7 @@ fun ShipmentCard(update: ViewUpdate) {
             if (update.isAbnormal && update.abnormalMessage != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "⚠️ Warning: ${update.abnormalMessage}",
+                    "Warning: ${update.abnormalMessage}",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium
                 )

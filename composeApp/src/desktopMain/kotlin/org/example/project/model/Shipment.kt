@@ -15,18 +15,18 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     fun isAbnormal(): Boolean = abnormal
     fun getAbnormalMessage(): String? = abnormalMessage
 
-    protected fun flagAbnormal(message: String) {
-        abnormal = true
-        abnormalMessage = message
-        notifyObservers()  // so the UI can react
-    }
-
     fun getId() = id
     fun getStatus() = status
     fun getLocation() = currentLocation
     fun getExpectedDeliveryDate() = expectedDeliveryDateTimestamp
     fun getNotes(): List<String> = notes.toList()
     fun getUpdateHistory(): List<ShippingUpdate> = updateHistory.toList()
+
+    protected fun flagAbnormal(message: String) {
+        abnormal = true
+        abnormalMessage = message
+        notifyObservers()  // so the UI can react
+    }
 
     // list of observers to send notifications to
     private val observers = mutableListOf<ShipmentUpdateListener>()
@@ -71,6 +71,10 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
             notes.add(note)
             notifyObservers()
         }
+    }
+
+    fun getCreationTime(): Long {
+        return getUpdateHistory().firstOrNull()?.timestamp ?: 0L
     }
 
 }
