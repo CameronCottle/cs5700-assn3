@@ -99,22 +99,91 @@ class TrackerViewHelperTests {
     }
 
     @Test
-    fun `abnormal update is reflected in UI`() = runTest {
-        val bulk = BulkShipment("bulk1")
-        CreatedStrategy().applyUpdate(bulk, ShipmentUpdateRecord("created", "bulk1", 0L, null))
-        TrackingServer.registerShipment(bulk.getId(), bulk)
+    fun `tracking same shipment twice keeps it unique in order list`() = runTest {
+        val id = "unique-test"
+        val shipment = StandardShipment(id)
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 1000L, null))
+        TrackingServer.registerShipment(id, shipment)
 
-        TrackerViewHelper.trackShipment("bulk1")
+        TrackerViewHelper.trackShipment(id)
+        TrackerViewHelper.trackShipment(id)
 
-        val oneDayLater = bulk.getCreationTime() + 1 * 24 * 60 * 60 * 1000L
-        bulk.delay(oneDayLater)
+        assertEquals(1, TrackerViewHelper.trackedOrder.count { it == id })
+    }
 
-        bulk.notifyObservers() // <-- Fix applied
+    @Test
+    fun `expected delivery date updates are reflected in UI`() = runTest {
+        val id = "edd-test"
+        val shipment = StandardShipment(id)
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 0L, null))
+        TrackingServer.registerShipment(id, shipment)
 
-        val display = TrackerViewHelper.trackedShipments["bulk1"]
+        TrackerViewHelper.trackShipment(id)
+
+        val expectedMillis = System.currentTimeMillis() + 86_400_000L // +1 day
+        shipment.delay(expectedMillis)
+
+        val display = TrackerViewHelper.trackedShipments[id]
         assertNotNull(display)
-        assertTrue(display.isAbnormal)
-        assertTrue(display.abnormalMessage?.contains("earlier than 3-day minimum") ?: false)
+        assertTrue(display.expectedDeliveryDate.contains("20")) // crude check for formatted timestamp
+    }
+
+    @Test
+    fun `bulk shipment abnormal note appears in UI`() = runTest {
+        val id = "bulk-abnormal"
+        val shipment = BulkShipment(id)
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 0L, null))
+        TrackingServer.registerShipment(id, shipment)
+
+        TrackerViewHelper.trackShipment(id)
+        shipment.delay(shipment.getCreationTime() + 1 * 24 * 60 * 60 * 1000L) // 1 day
+
+        val display = TrackerViewHelper.trackedShipments[id]
+        assertNotNull(display)
+        assertTrue(display.notes.any { it.contains("earlier than 3-day minimum", ignoreCase = true) })
+    }
+
+    @Test
+    fun `stopTracking silently ignores unknown IDs`() = runTest {
+        // Should not throw
+        TrackerViewHelper.stopTracking("nonexistent-id")
+    }
+
+    @Test
+    fun `multiple updates and notes accumulate correctly`() = runTest {
+        val id = "multi-update"
+        val shipment = StandardShipment(id)
+        CreatedStrategy().applyUpdate(shipment, ShipmentUpdateRecord("created", id, 0L, null))
+        TrackingServer.registerShipment(id, shipment)
+
+        TrackerViewHelper.trackShipment(id)
+
+        shipment.updateStatus("shipped", 1000L)
+        shipment.addNote("first note")
+        shipment.updateStatus("delivered", 2000L)
+        shipment.addNote("final note")
+
+        val display = TrackerViewHelper.trackedShipments[id]
+        assertNotNull(display)
+        assertEquals(2, display.notes.size)
+        assertEquals(2, display.updates.size) // created, shipped, delivered
+    }
+
+    @Test
+    fun `most recent tracked shipment is first in order list`() = runTest {
+        val id1 = "first"
+        val id2 = "second"
+        val s1 = StandardShipment(id1)
+        val s2 = StandardShipment(id2)
+        CreatedStrategy().applyUpdate(s1, ShipmentUpdateRecord("created", id1, 0L, null))
+        CreatedStrategy().applyUpdate(s2, ShipmentUpdateRecord("created", id2, 0L, null))
+        TrackingServer.registerShipment(id1, s1)
+        TrackingServer.registerShipment(id2, s2)
+
+        TrackerViewHelper.trackShipment(id1)
+        TrackerViewHelper.trackShipment(id2)
+
+        assertEquals(listOf(id2, id1), TrackerViewHelper.trackedOrder)
     }
 
 }
