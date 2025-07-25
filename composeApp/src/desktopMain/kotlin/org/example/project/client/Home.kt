@@ -89,19 +89,33 @@ fun Home(navigation: ComposeNavigation) {
 // the card to be displayed for every shipment being tracked
 @Composable
 fun ShipmentCard(update: ViewUpdate) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)) {
-
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Shipment ID: ${update.id}", style = MaterialTheme.typography.titleMedium)
             Text("Status: ${update.status}")
             Text("Location: ${update.location}")
             Text("Expected Delivery: ${update.expectedDeliveryDate}")
+
+            if (update.isAbnormal && update.abnormalMessage != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "⚠️ Warning: ${update.abnormalMessage}",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Updates:")
             update.updates.forEach { updateText ->
                 Text("• $updateText")
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Notes:")
             update.notes.forEach { note ->
                 Text("• $note")
@@ -109,3 +123,4 @@ fun ShipmentCard(update: ViewUpdate) {
         }
     }
 }
+

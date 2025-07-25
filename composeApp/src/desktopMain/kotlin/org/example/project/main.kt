@@ -16,7 +16,6 @@ fun main() = application {
         }.start(wait = true)
     }
 
-    // Start Compose UI
     Window(
         onCloseRequest = ::exitApplication,
         title = "Assn2",

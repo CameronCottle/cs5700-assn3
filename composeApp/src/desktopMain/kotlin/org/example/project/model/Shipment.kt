@@ -9,6 +9,17 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     private var expectedDeliveryDateTimestamp: Long = 0L
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
+    private var abnormal: Boolean = false
+    private var abnormalMessage: String? = null
+
+    fun isAbnormal(): Boolean = abnormal
+    fun getAbnormalMessage(): String? = abnormalMessage
+
+    protected fun flagAbnormal(message: String) {
+        abnormal = true
+        abnormalMessage = message
+        notifyObservers()  // so the UI can react
+    }
 
     fun getId() = id
     fun getStatus() = status
@@ -33,7 +44,7 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     }
 
     // below are the methods to update the information about a shipment. it is important to notify the observers after an update
-    fun updateStatus(newStatus: String, timestamp: Long) {
+    open fun updateStatus(newStatus: String, timestamp: Long) {
 
         val update = ShippingUpdate(
             previousStatus = this.status,
@@ -50,7 +61,7 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
         notifyObservers()
     }
 
-    fun delay(newExpected: Long) {
+    open fun delay(newExpected: Long) {
         expectedDeliveryDateTimestamp = newExpected
         notifyObservers()
     }

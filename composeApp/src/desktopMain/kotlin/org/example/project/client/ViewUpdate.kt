@@ -7,5 +7,7 @@ data class ViewUpdate(
     val location: String,
     val expectedDeliveryDate: String,
     val notes: List<String>,
-    val updates: List<String>
+    val updates: List<String>,
+    val isAbnormal: Boolean = false,
+    val abnormalMessage: String? = null
 )

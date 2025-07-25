@@ -59,7 +59,9 @@ object TrackerViewHelper : ShipmentUpdateListener {
             notes = shipment.getNotes(),
             updates = shipment.getUpdateHistory().map {
                 "Shipment went from ${it.previousStatus} to ${it.newStatus} on ${formatTimestamp(it.timestamp)}"
-            }
+            },
+            isAbnormal = shipment.isAbnormal(),
+            abnormalMessage = shipment.getAbnormalMessage()
         )
     }
 }
