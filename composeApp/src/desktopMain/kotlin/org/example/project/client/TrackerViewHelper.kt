@@ -55,7 +55,10 @@ object TrackerViewHelper : ShipmentUpdateListener {
             id = shipment.getId(),
             status = shipment.getStatus(),
             location = shipment.getLocation(),
-            expectedDeliveryDate = formatTimestamp(shipment.getExpectedDeliveryDate()),
+            expectedDeliveryDate = if (shipment.getExpectedDeliveryDate() != 0L)
+                formatTimestamp(shipment.getExpectedDeliveryDate())
+            else
+                "--",
             notes = shipment.getNotes(),
             updates = shipment.getUpdateHistory().map {
                 "Shipment went from ${it.previousStatus} to ${it.newStatus} on ${formatTimestamp(it.timestamp)}"

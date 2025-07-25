@@ -70,7 +70,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = " "
+        mainClass = ".org.example.project.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

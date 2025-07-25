@@ -65,15 +65,13 @@ object TrackingServer {
 
     fun applyUpdateFromString(updateString: String): Boolean {
         val update = parseLine(updateString)
-        println("Received update: $update")
 
         val shipment = shipments.getOrPut(update.shipmentId) {
             if (update.type == "created") {
                 val shipmentType = update.extra ?: throw IllegalArgumentException("Missing shipment type for 'created'")
-                ShipmentFactory.createShipment(shipmentType, update.shipmentId)
+                ShipmentFactory.createShipment(update.shipmentId, shipmentType)
+
             } else {
-                // fallback for updates before creation (optional)
-                println("Warning: shipment ${update.shipmentId} not created yet; initializing as StandardShipment.")
                 StandardShipment(update.shipmentId)
             }
         }
