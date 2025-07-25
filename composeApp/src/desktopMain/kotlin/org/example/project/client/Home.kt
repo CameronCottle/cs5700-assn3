@@ -15,21 +15,20 @@ import org.example.project.client.ViewUpdate
 // This is the home (and only) page to this application
 @Composable
 fun Home(navigation: ComposeNavigation) {
-    // to launch coroutines that are automatically cancelled when home is closed
     val coroutineScope = rememberCoroutineScope()
-    // input from user
     var inputId by remember { mutableStateOf("") }
-    // when a shipment ID is not valid
     var errorText by remember { mutableStateOf("") }
 
     // shipments being tracked
     val shipments = TrackerViewHelper.trackedShipments
 
-    // start the simulation
-//    LaunchedEffect(Unit) {
-//        val file = File("test.txt")
-//        TrackingServer.runSimulation(file)
-//    }
+    // Automatically clear error text after 7 seconds
+    LaunchedEffect(errorText) {
+        if (errorText.isNotEmpty()) {
+            kotlinx.coroutines.delay(7000)
+            errorText = ""
+        }
+    }
 
     // I used AI to help me with the UI for two reasons:
     // 1. I am not familiar with building UI with Kotlin
@@ -50,12 +49,17 @@ fun Home(navigation: ComposeNavigation) {
 
             Button(onClick = {
                 coroutineScope.launch {
-                    val success = TrackerViewHelper.trackShipment(inputId)
-                    errorText = if (!success) {
-                        println(errorText)
-                        "Shipment $inputId does not exist or hasn't been created yet."
+                    if (TrackerViewHelper.trackedShipments.containsKey(inputId)) {
+                        TrackerViewHelper.trackedOrder.remove(inputId)
+                        TrackerViewHelper.trackedOrder.add(0, inputId)
+                        errorText = "You are already tracking Shipment $inputId."
                     } else {
-                        ""
+                        val success = TrackerViewHelper.trackShipment(inputId)
+                        errorText = if (!success) {
+                            "Shipment $inputId does not exist or hasn't been created yet."
+                        } else {
+                            ""
+                        }
                     }
                     inputId = ""
                 }
@@ -79,8 +83,8 @@ fun Home(navigation: ComposeNavigation) {
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(shipments.values.toList(), key = { it.id }) { shipment ->
-                ShipmentCard(shipment)
+            items(TrackerViewHelper.trackedOrder, key = { it }) { id ->
+                TrackerViewHelper.trackedShipments[id]?.let { ShipmentCard(it) }
             }
         }
     }

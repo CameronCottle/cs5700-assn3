@@ -1,22 +1,20 @@
 package org.example.project.client
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.example.project.model.Shipment
 import org.example.project.observer.ShipmentUpdateListener
 import org.example.project.server.TrackingServer
-import org.example.project.client.ViewUpdate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 object TrackerViewHelper : ShipmentUpdateListener {
 
-    // Public observable map for Compose UI
     val trackedShipments = mutableStateMapOf<String, ViewUpdate>()
-
-    // Internal record of which shipments are being tracked
+    val trackedOrder = mutableStateListOf<String>()
     private val activeTrackIds = mutableSetOf<String>()
 
     override fun onShipmentUpdated(shipment: Shipment) {
@@ -28,19 +26,20 @@ object TrackerViewHelper : ShipmentUpdateListener {
     suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
         val shipment = TrackingServer.findShipment(id)
         return@withContext if (shipment != null) {
-            activeTrackIds.add(id)  // ✅ Add it before any updates happen
+            val isNew = activeTrackIds.add(id) // true if not already present
             shipment.addObserver(this@TrackerViewHelper)
             trackedShipments[id] = convertToViewUpdate(shipment)
+
+            // Update trackedOrder
+            synchronized(trackedOrder) {
+                trackedOrder.remove(id) // Ensure no duplicate
+                trackedOrder.add(0, id) // Add to top
+            }
+
             true
         } else {
             false
         }
-
-    }
-
-    private fun formatTimestamp(timestamp: Long): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date(timestamp))
     }
 
     fun stopTracking(id: String) {
@@ -48,6 +47,12 @@ object TrackerViewHelper : ShipmentUpdateListener {
         shipment?.removeObserver(this)
         activeTrackIds.remove(id)
         trackedShipments.remove(id)
+        trackedOrder.remove(id)
+    }
+
+    private fun formatTimestamp(timestamp: Long): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return sdf.format(Date(timestamp))
     }
 
     private fun convertToViewUpdate(shipment: Shipment): ViewUpdate {
