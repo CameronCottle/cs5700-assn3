@@ -9,23 +9,19 @@ import org.example.project.model.StandardShipment
 
 class ShippedStrategy : UpdateStrategy {
     override fun applyUpdate(shipment: Shipment, update: ShipmentUpdateRecord) {
-        val expectedTimestamp = update.extra?.toLongOrNull() ?: return
+        val expectedTimestamp = update.extra?.toLongOrNull()
+        if (expectedTimestamp == null) return
 
         when (shipment) {
-            is BulkShipment -> shipment.shipped(expectedTimestamp, update.timestamp)
-//            is ExpressShipment -> shipment.shipped(expectedTimestamp, update.timestamp)
-//            is OvernightShipment -> shipment.shipped(expectedTimestamp, update.timestamp)
-            is StandardShipment -> {
-                shipment.delay(expectedTimestamp)
-                shipment.updateStatus("shipped", update.timestamp)
-            }
-            else -> {
-                // fallback if you ever add a new type
-                shipment.delay(expectedTimestamp)
-                shipment.updateStatus("shipped", update.timestamp)
-            }
+            is BulkShipment -> shipment.delay(expectedTimestamp)
+            is OvernightShipment -> shipment.shipped(expectedTimestamp, update.timestamp)
+            is ExpressShipment -> shipment.delay(expectedTimestamp)
+            else -> shipment.delay(expectedTimestamp)
         }
+
+        shipment.updateStatus("shipped", update.timestamp)
     }
 }
+
 
 

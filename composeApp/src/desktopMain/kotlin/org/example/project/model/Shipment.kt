@@ -44,16 +44,17 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     }
 
     // below are the methods to update the information about a shipment. it is important to notify the observers after an update
-    open fun updateStatus(newStatus: String, timestamp: Long) {
-
-        val update = ShippingUpdate(
-            previousStatus = this.status,
-            newStatus = newStatus,
-            timestamp = timestamp
-        )
-        updateHistory.add(update)
-        this.status = newStatus
-        notifyObservers()
+    fun updateStatus(newStatus: String, timestamp: Long) {
+        if (this.status != newStatus) {
+            val update = ShippingUpdate(
+                previousStatus = this.status,
+                newStatus = newStatus,
+                timestamp = timestamp
+            )
+            updateHistory.add(update)
+            this.status = newStatus
+            notifyObservers()
+        }
     }
 
     fun updateLocation(location: String) {

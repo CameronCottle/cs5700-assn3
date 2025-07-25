@@ -1,12 +1,15 @@
 package org.example.project.model
 
 class OvernightShipment(id: String) : Shipment(id) {
-    override fun delay(newExpected: Long) {
-        super.delay(newExpected)
+    fun shipped(expected: Long, timestamp: Long) {
+        delay(expected)
+        updateStatus("shipped", timestamp)
 
         val creationTime = getCreationTime()
-        if (newExpected - creationTime > 24 * 60 * 60) {
-            flagAbnormal("Overnight shipment has a delivery date more than 1 day after creation")
+        val oneDayLater = creationTime + (24 * 60 * 60 * 1000L)
+        if (expected != oneDayLater) {
+            addNote("Overnight shipment expected delivery is not exactly 1 day after creation.")
         }
     }
 }
+
