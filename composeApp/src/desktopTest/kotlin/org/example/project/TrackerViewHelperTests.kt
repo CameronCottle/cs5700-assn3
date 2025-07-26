@@ -1,6 +1,8 @@
 package org.example.project.client
 
 import kotlinx.coroutines.test.runTest
+import org.example.project.factory.BulkShipment
+import org.example.project.factory.StandardShipment
 import org.example.project.model.*
 import org.example.project.server.TrackingServer
 import org.example.project.strategy.*

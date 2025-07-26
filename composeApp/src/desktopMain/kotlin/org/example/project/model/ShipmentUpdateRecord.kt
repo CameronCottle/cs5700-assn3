@@ -1,6 +1,6 @@
 package org.example.project.model
 
-// interface for anything that wants to be an observable
+// class to type what should be in an update
 data class ShipmentUpdateRecord(
     val type: String,
     val shipmentId: String,

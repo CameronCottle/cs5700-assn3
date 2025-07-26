@@ -66,7 +66,7 @@ fun Application.module() {
             val updateString = call.receiveText()
 
             try {
-                val success = TrackingServer.applyUpdateFromString(updateString)
+                val success = TrackingServer.applyShippingUpdate(updateString)
                 if (success) {
                     call.respondText("Update applied", status = HttpStatusCode.OK)
                 } else {
@@ -74,18 +74,6 @@ fun Application.module() {
                 }
             } catch (e: Exception) {
                 call.respondText("Error parsing update: ${e.message}", status = HttpStatusCode.BadRequest)
-            }
-        }
-
-        // Track a shipment
-        get("/track/{id}") {
-            val id = call.parameters["id"]
-            val shipment = id?.let { TrackingServer.findShipment(it) }
-
-            if (shipment == null) {
-                call.respondText("Shipment not found", status = HttpStatusCode.NotFound)
-            } else {
-                call.respondText(shipment.toString(), status = HttpStatusCode.OK)
             }
         }
     }

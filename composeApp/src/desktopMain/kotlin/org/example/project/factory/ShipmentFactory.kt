@@ -1,10 +1,10 @@
 package org.example.project.factory
 
-import org.example.project.model.BulkShipment
-import org.example.project.model.ExpressShipment
-import org.example.project.model.OvernightShipment
+import org.example.project.factory.BulkShipment
+import org.example.project.factory.ExpressShipment
+import org.example.project.factory.OvernightShipment
 import org.example.project.model.Shipment
-import org.example.project.model.StandardShipment
+import org.example.project.factory.StandardShipment
 
 object ShipmentFactory {
     fun createShipment(id: String, type: String): Shipment {

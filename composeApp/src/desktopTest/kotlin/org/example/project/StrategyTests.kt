@@ -1,5 +1,6 @@
 package org.example.project.strategy
 
+import org.example.project.factory.StandardShipment
 import org.example.project.model.*
 import kotlin.test.*
 

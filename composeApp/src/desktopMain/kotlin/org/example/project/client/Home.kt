@@ -16,8 +16,6 @@ fun Home(navigation: ComposeNavigation) {
     var inputId by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }
 
-    val shipments = TrackerViewHelper.trackedShipments
-
     LaunchedEffect(errorText) {
         if (errorText.isNotEmpty()) {
             kotlinx.coroutines.delay(7000)

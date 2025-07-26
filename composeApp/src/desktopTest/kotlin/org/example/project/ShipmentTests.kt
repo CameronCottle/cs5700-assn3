@@ -1,6 +1,10 @@
 package org.example.project.model
 
-import org.example.project.observer.ShipmentUpdateListener
+import org.example.project.factory.BulkShipment
+import org.example.project.factory.ExpressShipment
+import org.example.project.factory.OvernightShipment
+import org.example.project.factory.StandardShipment
+import org.example.project.observer.ShipmentObserver
 import kotlin.test.*
 
 class ShipmentTests {
@@ -73,7 +77,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on status update`() {
         var notified = false
-        val observer = object : ShipmentUpdateListener {
+        val observer = object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -86,7 +90,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on location update`() {
         var notified = false
-        val observer = object : ShipmentUpdateListener {
+        val observer = object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -99,7 +103,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on delay`() {
         var notified = false
-        val observer = object : ShipmentUpdateListener {
+        val observer = object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -112,7 +116,7 @@ class ShipmentTests {
     @Test
     fun `Observers should be notified on note added`() {
         var notified = false
-        val observer = object : ShipmentUpdateListener {
+        val observer = object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -125,7 +129,7 @@ class ShipmentTests {
     @Test
     fun `Removed observers should not be notified`() {
         var notified = false
-        val observer = object : ShipmentUpdateListener {
+        val observer = object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 notified = true
             }
@@ -206,7 +210,7 @@ class ShipmentTests {
     fun `Observer is notified for express shipment`() {
         val express = ExpressShipment("obs-express")
         var called = false
-        express.addObserver(object : ShipmentUpdateListener {
+        express.addObserver(object : ShipmentObserver {
             override fun onShipmentUpdated(s: Shipment) {
                 called = true
             }

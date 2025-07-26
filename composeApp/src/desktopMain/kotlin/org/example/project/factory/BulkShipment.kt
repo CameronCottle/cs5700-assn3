@@ -1,4 +1,6 @@
-package org.example.project.model
+package org.example.project.factory
+
+import org.example.project.model.Shipment
 
 class BulkShipment(id: String) : Shipment(id) {
     override fun delay(newExpected: Long) {
@@ -9,5 +11,3 @@ class BulkShipment(id: String) : Shipment(id) {
         }
     }
 }
-
-

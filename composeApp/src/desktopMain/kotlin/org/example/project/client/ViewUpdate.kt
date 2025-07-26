@@ -1,6 +1,6 @@
 package org.example.project.client
 
-// Complete information of a shipment
+// class to type the information that needs to go to the UI
 data class ViewUpdate(
     val id: String,
     val status: String,

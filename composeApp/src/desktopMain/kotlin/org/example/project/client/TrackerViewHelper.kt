@@ -5,49 +5,18 @@ import androidx.compose.runtime.mutableStateMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.example.project.model.Shipment
-import org.example.project.observer.ShipmentUpdateListener
+import org.example.project.observer.ShipmentObserver
 import org.example.project.server.TrackingServer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object TrackerViewHelper : ShipmentUpdateListener {
+object TrackerViewHelper : ShipmentObserver {
 
+    // maps a shipment id to what is being displayed
     val trackedShipments = mutableStateMapOf<String, ViewUpdate>()
+    // order of the cards on the screen
     val trackedOrder = mutableStateListOf<String>()
-    private val activeTrackIds = mutableSetOf<String>()
-
-    override fun onShipmentUpdated(shipment: Shipment) {
-        if (shipment.getId() in activeTrackIds) {
-            trackedShipments[shipment.getId()] = convertToViewUpdate(shipment)
-        }
-    }
-
-    suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
-        val shipment = TrackingServer.findShipment(id)
-        return@withContext if (shipment != null) {
-            val isNew = activeTrackIds.add(id)
-            shipment.addObserver(this@TrackerViewHelper)
-            trackedShipments[id] = convertToViewUpdate(shipment)
-
-            synchronized(trackedOrder) {
-                trackedOrder.remove(id)
-                trackedOrder.add(0, id)
-            }
-
-            true
-        } else {
-            false
-        }
-    }
-
-    fun stopTracking(id: String) {
-        val shipment = TrackingServer.findShipment(id)
-        shipment?.removeObserver(this)
-        activeTrackIds.remove(id)
-        trackedShipments.remove(id)
-        trackedOrder.remove(id)
-    }
 
     private fun formatTimestamp(timestamp: Long): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -68,5 +37,36 @@ object TrackerViewHelper : ShipmentUpdateListener {
                 "Shipment went from ${it.previousStatus} to ${it.newStatus} on ${formatTimestamp(it.timestamp)}"
             }
         )
+    }
+
+    override fun onShipmentUpdated(shipment: Shipment) {
+        if (trackedShipments.containsKey(shipment.getId())) {
+            trackedShipments[shipment.getId()] = convertToViewUpdate(shipment)
+        }
+    }
+
+    // suspended to offload the potentially slow or blocking operation to a background thread
+    suspend fun trackShipment(id: String): Boolean = withContext(Dispatchers.IO) {
+        val shipment = TrackingServer.findShipment(id)
+        return@withContext if (shipment != null) {
+            shipment.addObserver(this@TrackerViewHelper)
+            trackedShipments[id] = convertToViewUpdate(shipment)
+
+            synchronized(trackedOrder) {
+                trackedOrder.remove(id)
+                trackedOrder.add(0, id)
+            }
+
+            true
+        } else {
+            false
+        }
+    }
+
+    fun stopTracking(id: String) {
+        val shipment = TrackingServer.findShipment(id)
+        shipment?.removeObserver(this)
+        trackedShipments.remove(id)
+        trackedOrder.remove(id)
     }
 }

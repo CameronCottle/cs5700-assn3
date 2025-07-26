@@ -1,6 +1,6 @@
 package org.example.project.strategy
 
-import org.example.project.model.OvernightShipment
+import org.example.project.factory.OvernightShipment
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
 

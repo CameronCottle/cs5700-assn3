@@ -1,7 +1,7 @@
 package org.example.project.model
 
 import org.example.project.observer.ShipmentNotifier
-import org.example.project.observer.ShipmentUpdateListener
+import org.example.project.observer.ShipmentObserver
 
 abstract class Shipment(private val id: String) : ShipmentNotifier {
     private var status: String = "created"
@@ -9,11 +9,7 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     private var expectedDeliveryDateTimestamp: Long = 0L
     private val notes = mutableListOf<String>()
     private val updateHistory = mutableListOf<ShippingUpdate>()
-    private var abnormal: Boolean = false
-    private var abnormalMessage: String? = null
-
-    fun isAbnormal(): Boolean = abnormal
-    fun getAbnormalMessage(): String? = abnormalMessage
+    private val observers = mutableListOf<ShipmentObserver>()
 
     fun getId() = id
     fun getStatus() = status
@@ -22,20 +18,11 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     fun getNotes(): List<String> = notes.toList()
     fun getUpdateHistory(): List<ShippingUpdate> = updateHistory.toList()
 
-    protected fun flagAbnormal(message: String) {
-        abnormal = true
-        abnormalMessage = message
-        notifyObservers()  // so the UI can react
-    }
-
-    // list of observers to send notifications to
-    private val observers = mutableListOf<ShipmentUpdateListener>()
-
-    override fun addObserver(observer: ShipmentUpdateListener) {
+    override fun addObserver(observer: ShipmentObserver) {
         observers.add(observer)
     }
 
-    override fun removeObserver(observer: ShipmentUpdateListener) {
+    override fun removeObserver(observer: ShipmentObserver) {
         observers.remove(observer)
     }
 
@@ -43,7 +30,6 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
         observers.forEach { it.onShipmentUpdated(this) }
     }
 
-    // below are the methods to update the information about a shipment. it is important to notify the observers after an update
     fun updateStatus(newStatus: String, timestamp: Long) {
         if (this.status != newStatus) {
             val update = ShippingUpdate(
@@ -77,5 +63,4 @@ abstract class Shipment(private val id: String) : ShipmentNotifier {
     fun getCreationTime(): Long {
         return getUpdateHistory().firstOrNull()?.timestamp ?: 0L
     }
-
 }

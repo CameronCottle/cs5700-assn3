@@ -3,7 +3,7 @@ package org.example.project.server
 import org.example.project.factory.ShipmentFactory
 import org.example.project.model.Shipment
 import org.example.project.model.ShipmentUpdateRecord
-import org.example.project.model.StandardShipment
+import org.example.project.factory.StandardShipment
 import org.example.project.strategy.CancelledStrategy
 import org.example.project.strategy.CreatedStrategy
 import org.example.project.strategy.DelayedStrategy
@@ -15,7 +15,7 @@ import org.example.project.strategy.ShippedStrategy
 import org.example.project.strategy.UpdateStrategy
 
 
-object TrackingServer {
+object  TrackingServer {
     private val shipments = mutableMapOf<String, Shipment>()
 
     private val strategies: Map<String, UpdateStrategy> = mapOf(
@@ -63,8 +63,8 @@ object TrackingServer {
     // public so UI can inspect current state
     fun findShipment(id: String): Shipment? = shipments[id.trim()]
 
-    fun applyUpdateFromString(updateString: String): Boolean {
-        val update = parseLine(updateString)
+    fun applyShippingUpdate(update: String): Boolean {
+        val update = parseLine(update)
 
         val shipment = shipments.getOrPut(update.shipmentId) {
             if (update.type == "created") {
@@ -79,9 +79,6 @@ object TrackingServer {
         return strategies[update.type]?.applyUpdate(shipment, update) != null
     }
 
-
-
-    // for unit test injection
     fun registerShipment(id: String, shipment: Shipment) {
         shipments[id] = shipment
     }
